@@ -124,6 +124,11 @@ RSpec.describe User, type: :model do
 		end
 	end
 
+	let(:comment) { album.comments.create(
+					user_id: user.id,
+					body: Faker::Lorem.sentence
+				) }
+
 	context "사용자는 댓글을 생성한다" do
 		it "사진에 댓글을 생성한다" do
 			expect(photo1.comments.count).to eq 0
@@ -143,6 +148,16 @@ RSpec.describe User, type: :model do
 					body: Faker::Lorem.sentence
 				)
 			expect(album.comments.count).to eq 1
+		end
+
+		it "댓글에 대댓글을 생성한다" do
+			expect(comment.replies.count).to eq 0
+
+			album.comments.create(
+					user_id: user.id,
+					parent_id: comment.id
+				)
+			expect(comment.replies.count).to eq 1
 		end
 	end
 
