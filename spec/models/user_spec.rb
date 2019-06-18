@@ -27,6 +27,29 @@ RSpec.describe User, type: :model do
 		  end
 	    expect(User.count).to eq 1
 	  end
+
+	  it "facebook이나 naver를 이용해 로그인한다" do
+	  	info_from_omniauth_facebook = {
+	  		provider: 'facebook',
+			  uid: '1234567',
+			  extra: {
+			    raw_info: {
+			      username: 'jbloggs',
+			      gender: 'male',
+			      email: 'joe@bloggs.com',
+			      # ...
+			    }
+			  }
+	  	}
+	  	
+	    User.create(
+	    		email: info_from_omniauth_facebook[:extra][:raw_info][:email],
+	    		password: Faker::Internet.password,
+	    		nickname: info_from_omniauth_facebook[:extra][:raw_info][:username],
+	    		gender: info_from_omniauth_facebook[:extra][:raw_info][:gender],
+	    	)
+	    expect(User.count).to eq 1
+	  end
 	end 
 
 	let(:user) { User.create(
