@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_18_072558) do
+ActiveRecord::Schema.define(version: 2019_06_18_083115) do
 
   create_table "albums", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
     t.integer "user_id"
@@ -24,6 +24,15 @@ ActiveRecord::Schema.define(version: 2019_06_18_072558) do
     t.integer "photo_id"
     t.integer "seq"
     t.boolean "cover", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "comments", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "commentable_type"
+    t.integer "commentable_id"
+    t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

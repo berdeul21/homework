@@ -98,4 +98,26 @@ RSpec.describe User, type: :model do
 			expect(album.collects.find_by(cover: true).photo.id).to eq photo2.id
 		end
 	end
+
+	context "사용자는 댓글을 생성한다" do
+		it "사진에 댓글을 생성한다" do
+			expect(photo1.comments.count).to eq 0
+
+			photo1.comments.create(
+					user_id: user.id,
+					body: Faker::Lorem.sentence
+				)
+			expect(photo1.comments.count).to eq 1
+		end
+
+		it "사진묶음에 댓글을 생성한다" do
+			expect(album.comments.count).to eq 0
+
+			album.comments.create(
+					user_id: user.id,
+					body: Faker::Lorem.sentence
+				)
+			expect(album.comments.count).to eq 1
+		end
+	end
 end
