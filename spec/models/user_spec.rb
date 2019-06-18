@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
 	context "사용자를 생성한다" do
-	  it "사용자를 이메일, 비밀번호, 닉네임, 성별, 생년월을 입력하여 생성한다" do
+	  it "이메일, 비밀번호, 닉네임, 성별, 생년월을 입력하여 생성한다" do
 	  	expect(User.count).to eq 0
 
-	    user = User.create(
+	    User.create(
 	    		email: Faker::Internet.email,
 	    		password: Faker::Internet.password,
 	    		nickname: 'ohou',
@@ -15,14 +15,16 @@ RSpec.describe User, type: :model do
 	    expect(User.count).to eq 1
 	  end
 
-	  it "사용자를 닉네임으로 구분한다" do
-	    User.create(
-	    		email: Faker::Internet.email,
-	    		password: Faker::Internet.password,
-	    		nickname: 'ohou',
-	    		gender: Faker::Gender.binary_type,
-	    		birth: '201906'
-	    	)
+	  it "닉네임으로 구분한다" do
+	  	2.times do
+		    User.create(
+		    		email: Faker::Internet.email,
+		    		password: Faker::Internet.password,
+		    		nickname: 'ohou',
+		    		gender: Faker::Gender.binary_type,
+		    		birth: '201906'
+		    	)
+		  end
 	    expect(User.count).to eq 1
 	  end
 	end 
