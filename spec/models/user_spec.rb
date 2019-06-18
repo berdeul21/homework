@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe User, type: :model do
 	context "사용자를 생성한다" do
 	  it "이메일, 비밀번호, 닉네임, 성별, 생년월을 입력하여 생성한다" do
-	  	expect(User.count).to eq 0
+	  	expect(User.count).to eq 0 # 이후로부터 생략
 
 	    User.create(
 	    		email: Faker::Internet.email,
@@ -52,51 +52,53 @@ RSpec.describe User, type: :model do
 	  end
 	end 
 
-	let(:user) { User.create(
-	    		email: Faker::Internet.email,
-	    		password: Faker::Internet.password,
-	    		nickname: 'ohou',
-	    		gender: Faker::Gender.binary_type,
-	    		birth: '201906'
-	    	) }
+	2.times do |i|
+		let("user#{i}".to_sym) { User.create(
+		    		email: Faker::Internet.email,
+		    		password: Faker::Internet.password,
+		    		nickname: Faker::Movies::HarryPotter.character,
+		    		gender: Faker::Gender.binary_type,
+		    		birth: '201906'
+		    	) }
+	end
 
 	context "사용자는 사진을 생성한다" do
 		it "카테고리, 설명을 입력하여 사진을 생성할 수 있다" do
-			expect(Photo.where(user_id: user.id).count).to eq 0
+			expect(Photo.where(user_id: user0.id).count).to eq 0
 
 	    Photo.create(
-	    		user_id: user.id,
+	    		user_id: user0.id,
 	    		image_url: Faker::Avatar.image("my-own-slug", "50x50", "jpg"),
 	    		category: Faker::House.room,
 	    		description: Faker::Lorem.paragraph
 	    	)
-	    expect(Photo.where(user_id: user.id).count).to eq 1
+	    expect(Photo.where(user_id: user0.id).count).to eq 1
 	  end
 	end
 
 	3.times.each do |i|
 		let("photo#{i}".to_sym) { 
 					Photo.create(
-	    		user_id: user.id,
+	    		user_id: user0.id,
 	    		image_url: Faker::Avatar.image("my-own-slug", "50x50", "jpg"),
 	    		category: Faker::House.room,
 	    		description: Faker::Lorem.paragraph
 	    	) }
 	end
 	let(:album) { Album.create(
-					user_id: user.id,
+					user_id: user0.id,
 					summary: Faker::Lorem.paragraph
 				) }
 
 	context "사용자는 사진 묶음을 생성한다" do
 		it "요약글을 입력하여 사진묶음을 생성한다" do
-			expect(Album.where(user_id: user.id).count).to eq 0
+			expect(Album.where(user_id: user0.id).count).to eq 0
 
 			Album.create(
-					user_id: user.id,
+					user_id: user0.id,
 					summary: Faker::Lorem.paragraph
 				)
-			expect(Album.where(user_id: user.id).count).to eq 1
+			expect(Album.where(user_id: user0.id).count).to eq 1
 		end
 
 		it "사진을 순서를 입력하여 사진묶음에 넣는다" do
@@ -125,7 +127,7 @@ RSpec.describe User, type: :model do
 	end
 
 	let(:comment) { album.comments.create(
-					user_id: user.id,
+					user_id: user0.id,
 					body: Faker::Lorem.sentence
 				) }
 
@@ -134,7 +136,7 @@ RSpec.describe User, type: :model do
 			expect(photo1.comments.count).to eq 0
 
 			photo1.comments.create(
-					user_id: user.id,
+					user_id: user0.id,
 					body: Faker::Lorem.sentence
 				)
 			expect(photo1.comments.count).to eq 1
@@ -144,7 +146,7 @@ RSpec.describe User, type: :model do
 			expect(album.comments.count).to eq 0
 
 			album.comments.create(
-					user_id: user.id,
+					user_id: user0.id,
 					body: Faker::Lorem.sentence
 				)
 			expect(album.comments.count).to eq 1
@@ -154,7 +156,7 @@ RSpec.describe User, type: :model do
 			expect(comment.replies.count).to eq 0
 
 			album.comments.create(
-					user_id: user.id,
+					user_id: user0.id,
 					parent_id: comment.id
 				)
 			expect(comment.replies.count).to eq 1
@@ -166,19 +168,32 @@ RSpec.describe User, type: :model do
 			expect(photo2.likes.count).to eq 0
 
 			photo2.comments.create(
-					user_id: user.id
+					user_id: user0.id
 				)
 			expect(photo2.comments.count).to eq 1
 		end
 
-		it "사진묶음에 댓글을 생성한다" do
-			expect(album.comments.count).to eq 0
+		it "사진묶음에 좋아요를 한다" do
+			expect(album.likes.count).to eq 0
 
 			album.comments.create(
-					user_id: user.id,
-					body: Faker::Lorem.sentence
+					user_id: user0.id
 				)
 			expect(album.comments.count).to eq 1
+		end
+	end
+
+	context "사용자는 친구맺기를 한다" do
+		it "친구맺기를 한다" do
+			expect(user0.followings.count).to eq 0
+			expect(user1.followers.count).to eq 0
+
+			user0.following_relationships.create(
+					following_id: user1.id
+				)
+
+			expect(user0.followings.count).to eq 1
+			expect(user1.followers.count).to eq 1
 		end
 	end
 end
