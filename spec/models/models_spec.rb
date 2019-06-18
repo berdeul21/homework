@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe User, type: :model do
+RSpec.describe '2번 문제 모델 테스트', type: :model do
 	context "사용자를 생성한다" do
 	  it "이메일, 비밀번호, 닉네임, 성별, 생년월을 입력하여 생성한다" do
 	  	expect(User.count).to eq 0 # 이후로부터 생략
